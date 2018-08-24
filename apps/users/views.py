@@ -19,6 +19,14 @@ class CustomBackend(ModelBackend):
             return None
 
 
+class RegisterView(View):
+    def get(self, request):
+        return render(request, 'register.html', {})
+
+    def post(self, request):
+        pass
+
+
 class LoginView(View):
 
     def get(self, request):
@@ -37,3 +45,18 @@ class LoginView(View):
                 return render(request, 'login.html', {'msg': '用户名或者密码错误！'})
         else:
             return render(request, 'login.html', {'login_form': login_form})
+
+
+a=2  # 个数
+n=3  # 值
+while 1:
+    for i in range(2, n):
+        if n % i == 0:
+            n = n + 1
+            break
+        else:
+            n=n+1
+            a=a+1
+    if a == 521029:
+        print(n)
+        break
