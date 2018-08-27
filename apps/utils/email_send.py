@@ -34,3 +34,10 @@ def send_register_email(email, send_type='register'):
         send_status = send_mail(send_title, send_body, EMAIL_FROM, [email])
         if send_status:
             pass
+    elif send_type == 'forget':
+        send_title = '慕学在线网密码重置链接'
+        send_body = '请点击下面的链接重置你的密码：http://127.0.0.1:8000/reset/{0}'.format(code)
+
+        send_status = send_mail(send_title, send_body, EMAIL_FROM, [email])
+        if send_status:
+            pass

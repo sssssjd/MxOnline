@@ -17,7 +17,7 @@ Including another URLconf
 from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 import xadmin
-from users.views import LoginView, RegisterView, ActiveUserView
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ResetPwdView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -27,5 +27,8 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('register/', RegisterView.as_view(), name='register'),
     re_path(r'^captcha/', include('captcha.urls')),
-    re_path(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name='user_active')
+    re_path(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name='user_active'),
+    path('forgetpwd/', ForgetPwdView.as_view(), name='forget_pwd'),
+    re_path(r'^reset/(?P<active_code>.*)/$', ResetView.as_view(), name='reset_pwd_get'),
+    path('resetpwd/', ResetPwdView.as_view(), name='reset_pwd_post'),
 ]
