@@ -21,6 +21,7 @@ class CustomBackend(ModelBackend):
             return None
 
 
+# 注册用户激活
 class ActiveUserView(View):
     def get(self, request, active_code):
         all_records = EmailVerifyRecord.objects.filter(code=active_code)
@@ -35,6 +36,7 @@ class ActiveUserView(View):
         return render(request, 'login.html', {'msg': '请使用已激活的邮箱登录。'})
 
 
+# 用户注册
 class RegisterView(View):
     def get(self, request):
         register_form = RegisterForm()
@@ -60,6 +62,7 @@ class RegisterView(View):
             return render(request, 'register.html', {'register_form': register_form})
 
 
+# 用户登录
 class LoginView(View):
 
     def get(self, request):
@@ -83,6 +86,7 @@ class LoginView(View):
             return render(request, 'login.html', {'login_form': login_form})
 
 
+# 忘记密码页面
 class ForgetPwdView(View):
     def get(self, request):
         forgetpwd_form = ForgetPwdForm()
@@ -98,6 +102,7 @@ class ForgetPwdView(View):
             return render(request, 'forgetpwd.html', {'forgetpwd_form': forgetpwd_form})
 
 
+# 重置密码页面1
 class ResetView(View):
     def get(self, request, active_code):
         all_records = EmailVerifyRecord.objects.filter(code=active_code)
@@ -110,6 +115,7 @@ class ResetView(View):
         return render(request, 'login.html')
 
 
+# 重置密码页面2
 class ResetPwdView(View):
     def post(self, request):
         resetpwd_form = ResetPwdForm(request.POST)
