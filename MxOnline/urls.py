@@ -20,7 +20,6 @@ from django.views.static import serve
 import xadmin
 from MxOnline.settings import MEDIA_ROOT
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ResetPwdView
-from organization.views import OrgView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -35,8 +34,9 @@ urlpatterns = [
     re_path(r'^reset/(?P<active_code>.*)/$', ResetView.as_view(), name='reset_pwd_get'),
     path('resetpwd/', ResetPwdView.as_view(), name='reset_pwd_post'),
 
-    # 课程结构首页
-    path('org_list/', OrgView.as_view(), name='org_list'),
+    # 课程机构url配置
+    path('org/', include('organization.urls', namespace='org')),
+
     # 配置上传文件的访问处理函数
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 
