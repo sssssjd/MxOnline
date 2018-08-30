@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import CourseOrg, CityDict, Teacher
+from courses.models import Course
 from operation.forms import UserAskForm
 # Create your views here.
 
@@ -73,3 +74,63 @@ class UserAskView(View):
         else:
             return HttpResponse("{'status': 'fail', 'msg':{0}}".format(userask_form.errors), content_type='json')
             # return HttpResponse('{"status":"fail", "msg":"请求失败！"}', content_type='application/json')
+
+
+class OrgHomeView(View):
+    """
+    机构主页
+    """
+    def get(self, request, org_id):
+        current_page = 'org_home'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_courses = course_org.course_set.all()[:4]
+        all_teachers = course_org.teacher_set.all()[:3]
+        return render(request, 'org-detail-homepage.html', {
+            'course_org': course_org,
+            'all_courses': all_courses,
+            'all_teachers': all_teachers,
+            'current_page': current_page
+        })
+
+
+class OrgCourseView(View):
+    """
+    机构课程
+    """
+    def get(self, request, org_id):
+        current_page = 'org_course'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_courses = course_org.course_set.all()
+        return render(request, 'org-detail-course.html', {
+            'course_org': course_org,
+            'all_courses': all_courses,
+            'current_page': current_page
+        })
+
+
+class OrgDescView(View):
+    """
+    机构介绍
+    """
+    def get(self, request, org_id):
+        current_page = 'org_desc'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        return render(request, 'org-detail-desc.html', {
+            'course_org': course_org,
+            'current_page': current_page
+        })
+
+
+class OrgTeacherView(View):
+    """
+    机构讲师
+    """
+    def get(self, request, org_id):
+        current_page = 'org_teacher'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_teachers = course_org.teacher_set.all()
+        return render(request, 'org-detail-teachers.html', {
+            'course_org': course_org,
+            'all_teachers': all_teachers,
+            'current_page': current_page
+        })
