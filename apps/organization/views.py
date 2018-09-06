@@ -5,9 +5,10 @@ from django.http import HttpResponse
 
 from pure_pagination import Paginator, PageNotAnInteger
 
-from .models import CourseOrg, CityDict
+from .models import CourseOrg, CityDict, Teacher
 from operation.models import UserFavorite
 from operation.forms import UserAskForm
+from courses.models import Course
 # Create your views here.
 
 
@@ -185,3 +186,52 @@ class AddFavView(View):
                 return HttpResponse('{"status":"fail", "msg":"收藏出错！"}', content_type='application/json')
 
 
+class TeacherListView(View):
+    def get(self, request):
+        all_teachers = Teacher.objects.all()
+        hot_teachers = all_teachers.order_by('-click_nums')[:5]
+
+        sort = request.GET.get('sort', '')
+        if sort:
+            if sort == 'hot':
+                all_teachers = all_teachers.order_by('-click_nums')
+
+        # 对讲师列表分页
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        p = Paginator(all_teachers, per_page=3)
+        teachers = p.page(page)
+        return render(request, 'teachers-list.html', {
+            'all_teachers': teachers,
+            'hot_teachers': hot_teachers,
+            'sort': sort,
+        })
+
+
+class TeacherDetailView(View):
+    def get(self, request, teacher_id):
+        all_teachers = Teacher.objects.all()
+        hot_teachers = all_teachers.order_by('-click_nums')[:5]
+        teacher = Teacher.objects.get(id=int(teacher_id))
+        teacher.click_nums += 1
+        teacher.save()
+
+        teacher_courses = Course.objects.filter(teacher_id=teacher.id)
+
+        teacher_has_fav = False
+        org_has_fav = False
+        if request.user.is_authenticated:
+            if UserFavorite.objects.filter(user=request.user, fav_id=teacher.id, fav_type=3):
+                teacher_has_fav = True
+            if UserFavorite.objects.filter(user=request.user, fav_id=teacher.org.id, fav_type=2):
+                org_has_fav = True
+
+        return render(request, 'teacher-detail.html', {
+            'teacher': teacher,
+            'hot_teachers': hot_teachers,
+            'teacher_courses': teacher_courses,
+            'teacher_has_fav': teacher_has_fav,
+            'org_has_fav': org_has_fav,
+        })

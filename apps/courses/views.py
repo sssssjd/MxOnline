@@ -8,6 +8,7 @@ from pure_pagination import Paginator, PageNotAnInteger
 from .models import Course, CourseResource
 from organization.models import CourseOrg
 from operation.models import UserFavorite, CourseComments, UserCourse
+from utils.mixin_utils import LoginRequiredMixin
 
 # Create your views here.
 
@@ -76,17 +77,25 @@ class CourseDetailView(View):
         })
 
 
-class CourseInfoView(View):
+class CourseInfoView(LoginRequiredMixin, View):
     def get(self, request, course_id):
         course = Course.objects.get(id=int(course_id))
-        all_resources = CourseResource.objects.filter(course=course)
+        # 查询用户是否已经关联了该课程
+        user_courses = UserCourse.objects.filter(user=request.user, course=course)
+        if not user_courses:
+            user_course = UserCourse(user=request.user, course=course)
+            user_course.save()
+
         user_courses = UserCourse.objects.filter(course=course)
         user_ids = [user_course.user.id for user_course in user_courses]
         all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
         # 取出所有课程ID
-        course_ids = [user_course.course.id for user_course in user_courses]
+        course_ids = [user_course.course.id for user_course in all_user_courses]
         # 获取该用户学过的其他课程
         relate_courses = Course.objects.filter(id__in=course_ids).order_by('-click_nums')[:5]
+
+        # 课程资源
+        all_resources = CourseResource.objects.filter(course=course)
         return render(request, 'course-video.html', {
             'course': course,
             'course_resources': all_resources,
@@ -94,7 +103,7 @@ class CourseInfoView(View):
         })
 
 
-class CourseCommentView(View):
+class CourseCommentView(LoginRequiredMixin, View):
     def get(self, request, course_id):
         course = Course.objects.get(id=int(course_id))
         all_resources = CourseResource.objects.filter(course=course)
