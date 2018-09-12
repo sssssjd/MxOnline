@@ -40,6 +40,9 @@ urlpatterns = [
     # 课程相关url配置
     path('course/', include('courses.urls', namespace='course')),
 
+    # 用户信息相关url配置
+    path('user/', include('users.urls', namespace='user')),
+
     # 配置上传文件的访问处理函数
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 
