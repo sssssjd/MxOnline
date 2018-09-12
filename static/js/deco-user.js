@@ -36,6 +36,7 @@ function sendCodeChangeEmail($btn){
     });
 
 }
+
 //个人资料邮箱修改
 function changeEmailSubmit($btn){
 var verify = verifyDialogSubmit(
@@ -75,6 +76,7 @@ var verify = verifyDialogSubmit(
     });
 }
 
+//个人资料修改
 $(function(){
     //个人资料修改密码
     $('#jsUserResetPwd').on('click', function(){
@@ -160,7 +162,7 @@ $(function(){
             cache: false,
             type: 'post',
             dataType:'json',
-            url:"/users/info/",
+            url:"/user/info/",
             data:$jsEditUserForm.serialize(),
             async: true,
             beforeSend:function(XMLHttpRequest){
@@ -170,16 +172,16 @@ $(function(){
             success: function(data) {
                 if(data.nick_name){
                     _showValidateError($('#nick_name'), data.nick_name);
-                }else if(data.birday){
-                   _showValidateError($('#birth_day'), data.birday);
+                }else if(data.bir_day){
+                   _showValidateError($('#birth_day'), data.bir_day);
                 }else if(data.address){
                    _showValidateError($('#address'), data.address);
-                }else if(data.status == "failure"){
+                }else if(data.status === "failure"){
                      Dml.fun.showTipsDialog({
                         title: '保存失败',
                         h2: data.msg
                     });
-                }else if(data.status == "success"){
+                }else if(data.status === "success"){
                     Dml.fun.showTipsDialog({
                         title: '保存成功',
                         h2: '个人信息修改成功！'
