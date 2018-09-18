@@ -17,6 +17,7 @@ class Course(models.Model):
     students = models.IntegerField(default=0, verbose_name=u'学习人数')
     fav_nums = models.IntegerField(default=0, verbose_name=u'收藏数')
     image = models.ImageField(upload_to='courses/%Y/%m', verbose_name=u'封面图', max_length=100)
+    is_banner = models.BooleanField(default=False, verbose_name=u'是否是首页广告')
     click_nums = models.IntegerField(default=0, verbose_name=u'点击量')
     category = models.CharField(default=u'后端开发', max_length=50, verbose_name=u'课程类别')
     tag = models.CharField(default='', max_length=50, verbose_name=u'课程标签')

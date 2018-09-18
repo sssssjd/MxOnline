@@ -18,15 +18,17 @@ from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 from django.views.static import serve
 import xadmin
-from MxOnline.settings import MEDIA_ROOT
-from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ResetPwdView
+from MxOnline.settings import MEDIA_ROOT, STATIC_ROOT
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView,\
+    ResetView, ResetPwdView, LogoutView, IndexView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('xadmin/', xadmin.site.urls),
 
-    path('', TemplateView.as_view(template_name='index.html'), name='index'),
+    path('', IndexView.as_view(), name='index'),
     path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
     re_path(r'^captcha/', include('captcha.urls')),
     re_path(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name='user_active'),
@@ -45,5 +47,11 @@ urlpatterns = [
 
     # 配置上传文件的访问处理函数
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
 
 ]
+
+handler404 = 'users.views.page_not_found'
+handler403 = 'users.views.page_forbidden'
+handler500 = 'users.views.page_error'
+

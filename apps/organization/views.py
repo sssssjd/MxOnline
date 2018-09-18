@@ -91,6 +91,8 @@ class OrgHomeView(View):
     def get(self, request, org_id):
         current_page = 'org_home'
         course_org = CourseOrg.objects.get(id=int(org_id))
+        course_org.click_nums += 1
+        course_org.save()
         has_fav = False
         if request.user.is_authenticated:
             if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):

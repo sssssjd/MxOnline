@@ -2,14 +2,15 @@ import json
 from pure_pagination import Paginator, PageNotAnInteger
 
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
 from django.db.models import Q
 from django.views.generic.base import View
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
-from .models import UserProfile, EmailVerifyRecord
+from .models import UserProfile, EmailVerifyRecord, Banner
 from .forms import LoginForm, RegisterForm, ForgetPwdForm, ResetPwdForm, UploadImageForm, UserInfoForm
 from utils.email_send import send_register_email
 from utils.mixin_utils import LoginRequiredMixin
@@ -92,13 +93,20 @@ class LoginView(View):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return render(request, 'index.html', {})
+                    return HttpResponseRedirect(reverse('index'))
                 else:
                     return render(request, 'login.html', {'msg': '该用户未激活！'})
             else:
                 return render(request, 'login.html', {'msg': '用户名或者密码错误！'})
         else:
             return render(request, 'login.html', {'login_form': login_form})
+
+
+# 用户退出登录
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect(reverse('index'))
 
 
 # 忘记密码页面
@@ -280,7 +288,10 @@ class MyMessageView(LoginRequiredMixin, View):
     """
     def get(self, request):
         all_messages = UserMessage.objects.filter(user=request.user.id)
-
+        all_unread_messages = all_messages.filter(has_read=False)
+        for unread_message in all_unread_messages:
+            unread_message.has_read = True
+            unread_message.save()
         # 对消息分页
         try:
             page = request.GET.get('page', 1)
@@ -290,3 +301,46 @@ class MyMessageView(LoginRequiredMixin, View):
         messages = p.page(page)
 
         return render(request, 'usercenter-message.html', {'messages': messages})
+
+
+class IndexView(View):
+    def get(self, request):
+        # banner
+        all_banners = Banner.objects.all().order_by('index')
+        # Course
+        banner_courses = Course.objects.filter(is_banner=True)[:3]
+        courses = Course.objects.filter(is_banner=False)[:5]
+
+        # Org
+        orgs = CourseOrg.objects.all()[:15]
+
+        return render(request, 'index.html', {
+            'all_banners': all_banners,
+            'banner_courses': banner_courses,
+            'courses': courses,
+            'orgs': orgs,
+        })
+
+
+# 404 page
+def page_not_found(request, **kwargs):
+    from django.shortcuts import render_to_response
+    response = render_to_response('404.html', {})
+    response.status_code = 404
+    return response
+
+
+# 403 page
+def page_forbidden(request, **kwargs):
+    from django.shortcuts import render_to_response
+    response = render_to_response('403.html', {})
+    response.status_code = 403
+    return response
+
+
+# 500 page
+def page_error(request, **kwargs):
+    from django.shortcuts import render_to_response
+    response = render_to_response('500.html', {})
+    response.status_code = 500
+    return response
