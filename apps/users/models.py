@@ -15,7 +15,7 @@ class UserProfile(AbstractUser):
     image = models.ImageField(upload_to='image/%Y/%m', default=u'image/default.png', max_length=100)
 
     class Meta:
-        verbose_name = '用户信息'
+        verbose_name = '后台用户'
         verbose_name_plural = verbose_name
 
     def get_unread_nums(self):
@@ -25,6 +25,13 @@ class UserProfile(AbstractUser):
 
     def __str__(self):
         return self.nick_name
+
+
+class FrontUserProfile(UserProfile):
+    class Meta:
+        verbose_name = '前台用户'
+        verbose_name_plural = verbose_name
+        proxy = True
 
 
 class EmailVerifyRecord(models.Model):

@@ -33,6 +33,8 @@ class Course(models.Model):
         # 获取课程章节数
         return self.lesson_set.all().count()
 
+    get_lesson_nums.short_description = '章节数'
+
     def get_lesson_students(self):
         # 获取课程学生
         return self.usercourse_set.all()[:5]
@@ -43,6 +45,13 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BannerCourse(Course):
+    class Meta:
+        verbose_name = '轮播课程'
+        verbose_name_plural = verbose_name
+        proxy = True
 
 
 class Lesson(models.Model):

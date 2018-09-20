@@ -64,7 +64,7 @@ class UserAdmin(object):
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('username',)
     style_fields = {'user_permissions': 'm2m_transfer'}
-    model_icon = 'fa fa-user'
+    model_icon = 'fa fa-user-circle'
     relfield_style = 'fk-ajax'
 
     def get_field_attrs(self, db_field, **kwargs):
@@ -118,8 +118,9 @@ class PermissionAdmin(object):
     model_icon = 'fa fa-lock'
     list_display = ('show_name', )
 
+
 site.register(Group, GroupAdmin)
-site.register(User, UserAdmin)
+# site.register(User, UserAdmin)
 site.register(Permission, PermissionAdmin)
 
 

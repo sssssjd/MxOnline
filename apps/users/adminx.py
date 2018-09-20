@@ -4,7 +4,22 @@ __date__ = '2018/8/22 17:38'
 
 import xadmin
 from xadmin import views
-from .models import EmailVerifyRecord, Banner
+from .models import EmailVerifyRecord, Banner, UserProfile, FrontUserProfile
+from xadmin.plugins.auth import UserAdmin
+
+
+class BackendUserProfileAdmin(UserAdmin):
+    def queryset(self):
+        qs = super(BackendUserProfileAdmin, self).queryset()
+        qs = qs.filter(is_staff=True)
+        return qs
+
+
+class FrontUserProfileAdmin(UserAdmin):
+    def queryset(self):
+        qs = super(FrontUserProfileAdmin, self).queryset()
+        qs = qs.filter(is_staff=False)
+        return qs
 
 
 class BaseSetting(object):
@@ -22,14 +37,20 @@ class EmailVerifyRecordAdmin(object):
     list_display = ['code', 'email', 'send_type', 'send_time']
     search_fields = ['code', 'email', 'send_type']
     list_filter = ['code', 'email', 'send_type', 'send_time']
+    model_icon = 'fa fa-envelope'
 
 
 class BannerAdmin(object):
     list_display = ['title', 'image', 'url', 'index', 'add_time']
     search_fields = ['title', 'image', 'url', 'index']
     list_filter = ['title', 'image', 'url', 'index', 'add_time']
+    model_icon = 'fa fa-image'
 
 
+# xadmin.site.unregister(UserProfile)
+# xadmin.site.register(UserProfile, UserProfileAdmin)
+xadmin.site.register(UserProfile, BackendUserProfileAdmin)
+xadmin.site.register(FrontUserProfile, FrontUserProfileAdmin)
 xadmin.site.register(EmailVerifyRecord, EmailVerifyRecordAdmin)
 xadmin.site.register(Banner, BannerAdmin)
 xadmin.site.register(views.BaseAdminView, BaseSetting)
