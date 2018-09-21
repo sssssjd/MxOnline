@@ -49,6 +49,9 @@ urlpatterns = [
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
     # re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
 
+    # Uedit富文本编辑器
+    re_path(r'^ueditor/', include('DjangoUeditor.urls'))
+
 ]
 
 handler404 = 'users.views.page_not_found'
