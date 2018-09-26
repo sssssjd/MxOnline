@@ -30,7 +30,9 @@ class CourseAdmin(object):
     exclude = ['fav_nums']
     list_editable = ['degree', 'desc', 'learn_times']
     inlines = [LessonInline, CourseResourceInline]
-    style_fields = {'detail': 'ueditor'}
+
+    # 富文本集成出现问题，暂时关闭
+    # style_fields = {'detail': 'ueditor'}
 
     def queryset(self):
         qs = super(CourseAdmin, self).queryset()
