@@ -19,6 +19,7 @@ from django.views.generic import TemplateView
 from django.views.static import serve
 import xadmin
 from MxOnline.settings import MEDIA_ROOT
+from MxOnline.settings import STATIC_ROOT
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView,\
     ResetView, ResetPwdView, LogoutView, IndexView
 
@@ -47,7 +48,7 @@ urlpatterns = [
 
     # 配置上传文件的访问处理函数
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
-    # re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
 
     # Uedit富文本编辑器
     re_path(r'^ueditor/', include('DjangoUeditor.urls'))
