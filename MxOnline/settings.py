@@ -146,10 +146,10 @@ USE_TZ = False
 
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'sssssjd@163.com'
-EMAIL_HOST_PASSWORD = 'sssssjd123'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TSL = False
-EMAIL_FROM = 'sssssjd@163.com'
+EMAIL_FROM = ''
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
